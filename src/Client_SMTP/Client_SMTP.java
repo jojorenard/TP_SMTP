@@ -4,6 +4,7 @@ import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.*;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -28,6 +29,27 @@ public class Client_SMTP {
         initClientSSL();
         System.out.println("Bonjour, ecrivez 'Nouveau message' pour ecrire un nouveau message.");
         start();
+    }
+    private boolean connecte(InetAddress ip, int port){
+        try{
+            clientSocket.connect(new InetSocketAddress(ip, port));
+            try{
+                out = new DataOutputStream(clientSocket.getOutputStream());
+                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            }
+            catch(IOException e){
+                System.out.println(e.getLocalizedMessage());
+                System.out.println(e.getMessage());
+            }
+            String[] response = in.readLine().split(" ");
+
+            return true;
+        }
+        catch (IOException e){
+            System.out.println(e.getLocalizedMessage());
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 
     private void initClientSSL(){
@@ -109,7 +131,12 @@ public class Client_SMTP {
         boolean added;
         String domainMail, domainAdded;
         for(String mail : listMails){
-            domainMail = mail.split("@")[1].split(".")[0];
+            System.out.println(mail);
+            System.out.println(mail.split("@")[1]);
+            String truc = mail.split("@")[1];
+            domainMail = truc.split("\\.")[0];
+//            domainMail = mail.split("@")[1].split(".")[0];
+            System.out.println(domainMail);
             added = false;
             for(int i=0;!added && i<regroupedMails.size();i++){
                 List<String> group = regroupedMails.get(i);
@@ -155,7 +182,23 @@ public class Client_SMTP {
         }
     }
 
-    public void send(){
+    public void send(){//@TODO : ajouter les parametres destinataire etc..
+        System.out.println("envoi du message");
+        try{
+            InetAddress ip = InetAddress.getByName("127.0.0.1");
+            int port = 1025;
+            connecte(ip,port);
+            String commande = "EHLO gmail.com";
+            out.writeBytes(commande+"\r");
+            out.flush();
+            String response = in.readLine();
+            //System.out.println(response);
+        }
+        catch(IOException e){
+            System.out.println(e.getLocalizedMessage());
+            System.out.println(e.getMessage());
+        }
+
         //A completer avec les EHLO, MAIL FROM, RCPT, DATA
         //Afficher de la réussite ou de l'échec
         //retourner au début quand on a fini

@@ -16,7 +16,7 @@ public class Serveur_SMTP {
 
     //CONSTANTS
     final Boolean SERVER_IS_RUNNING = true;
-    final int SERVER_PORT= 1025;
+    final int SERVER_PORT= 1026;
 
     //INITIALIZE
     private SSLServerSocket server;
@@ -68,7 +68,6 @@ public class Serveur_SMTP {
     }
 
     // Lancement du serveur
-
     public static void main(String[] args) {
         Serveur_SMTP srv = new Serveur_SMTP();
         srv.run();
