@@ -2,9 +2,9 @@ package Serveur_SMTP.Commandes;
 
 import Serveur_SMTP.Connexion;
 
-public class CommandesRETR extends Commandes{
+public class CommandesRCPT extends Commandes{
 
-    CommandesRETR(Connexion server, String command) {
+    CommandesRCPT(Connexion server, String command) {
         super(server, command);
     }
 
