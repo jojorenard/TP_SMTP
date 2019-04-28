@@ -72,7 +72,7 @@ public class Connexion implements Runnable {
     public void run(){/////////// A CHANGER EVIDEMENT
         try {
             // an echo server
-            String data = "+OK alpha POP3 server Ready "+timbre+"\r"; //220 foo.com Simple Mail Transfer Service Ready
+            String data = "220 "+getServerDomain()+" Simple Mail Transfer Service Ready"+"\r";
 
             System.out.println ("New connection: " + client.getPort() + ", " + client.getInetAddress());
             outputdata.writeBytes(data); // UTF is a string encoding
@@ -94,16 +94,16 @@ public class Connexion implements Runnable {
         System.out.println("Reading from stream:");
         try {
             String command;
-//            try {
+            try {
                 while ((command = inputdata.readLine()) != null && !close) {
                     System.out.println("receive from : " + client.getInetAddress() + " : " + client.getPort() + ", command : " + command);
                     answerCommand(command);
                     if (close)
                         break;
                 }
-//            }catch (Exception e){
-//                System.out.println("\n Connexion avec le client :" + client.getInetAddress() + " : " + client.getPort() + " coupée inopinement !");
-//            }
+            }catch (Exception e){
+                System.out.println("\n Connexion avec le client :" + client.getInetAddress() + " : " + client.getPort() + " coupée inopinement !");
+            }
             if(close)
             {
 //                sendResponse("-ERR number of chances attempt");

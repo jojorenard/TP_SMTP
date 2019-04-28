@@ -69,7 +69,7 @@ public class Serveur_SMTP {
 
     // Lancement du serveur
     public static void main(String[] args) {
-        Serveur_SMTP srv = new Serveur_SMTP();
+        Serveur_SMTP srv = new Serveur_SMTP("gmail.com");
         srv.run();
     }
 
