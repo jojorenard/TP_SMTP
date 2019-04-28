@@ -2,8 +2,7 @@ package Serveur_SMTP.Commandes;
 
 import Serveur_SMTP.Connexion;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 
 public class CommandesDATA extends Commandes{
 
@@ -22,12 +21,13 @@ public class CommandesDATA extends Commandes{
         try{
             do {
                 System.out.println(data);
-                mail+=data;
+                mail+=data+"\n";
             } while (!(data = server.inputdata.readLine()).equals("."));
+            mail+=".";
 
-            writeFile(mail);
-
-            server.setStateNum(6);
+            if(writeFile(mail)){
+                server.setStateNum(6);
+            }
 
             return "250 OK";
         } catch(IOException e) {
@@ -42,17 +42,17 @@ public class CommandesDATA extends Commandes{
         return content.split(" ");
     }
 
-    String writeFile(String data) {
+    boolean writeFile(String data) {
         try {
-            FileWriter outFile = new FileWriter("src//Server_SMTP//BDD//Mails//" + clientDomain + server.autoincrement + ".txt", true);
+            File file = new File("src/Serveur_SMTP/BDD/Mails/" + server.getServerDomain() + server.autoincrement + ".txt");
+            BufferedWriter outFile = new BufferedWriter(new FileWriter(file));
             server.autoincrement+= 1;
-            outFile.write("\r\n");
             outFile.write(data);
             outFile.close();
         } catch(IOException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         }
 
-        return null;
+        return true;
     }
 }

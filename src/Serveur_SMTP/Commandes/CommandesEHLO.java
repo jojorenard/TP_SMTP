@@ -11,7 +11,6 @@ public class CommandesEHLO extends Commandes {
     @Override
     String makeAnswer(String content) {
         String[] s = extractContent(content);
-        clientDomain = s[1];
 
         server.setStateNum(3);
 
