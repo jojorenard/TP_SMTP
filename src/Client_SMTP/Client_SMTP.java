@@ -131,12 +131,7 @@ public class Client_SMTP {
         boolean added;
         String domainMail, domainAdded;
         for(String mail : listMails){
-            System.out.println(mail);
-            System.out.println(mail.split("@")[1]);
-            String truc = mail.split("@")[1];
-            domainMail = truc.split("\\.")[0];
-//            domainMail = mail.split("@")[1].split(".")[0];
-            System.out.println(domainMail);
+            domainMail =  mail.split("@")[1].split("\\.")[0];
             added = false;
             for(int i=0;!added && i<regroupedMails.size();i++){
                 List<String> group = regroupedMails.get(i);
@@ -177,7 +172,7 @@ public class Client_SMTP {
             return listMails;
         }
         else{
-            System.out.println("Aucun mail a été enregistré, veuillez indiquer au moins un mail");
+            System.out.println("Aucun mail n'a été enregistré, veuillez indiquer au moins un mail");
             return getRCPT();
         }
     }
@@ -187,12 +182,20 @@ public class Client_SMTP {
         try{
             InetAddress ip = InetAddress.getByName("127.0.0.1");
             int port = 1025;
-            connecte(ip,port);
-            String commande = "EHLO gmail.com";
-            out.writeBytes(commande+"\r");
-            out.flush();
-            String response = in.readLine();
-            //System.out.println(response);
+            this.connecte(ip,port);
+            try{
+                String commande = "EHLO gmail.com";//EHLO + getdomain
+                out.writeBytes(commande+"\r");
+                out.flush();
+//                String response = in.readLine();
+//                System.out.println(response);
+                System.out.println(in.readLine());//seulement pour voir qu'on recoit bien la réponse
+            }
+            catch (IOException e){
+                System.out.println(e.getLocalizedMessage());
+                System.out.println(e.getMessage());
+                System.out.println("ERR");
+            }
         }
         catch(IOException e){
             System.out.println(e.getLocalizedMessage());
@@ -442,7 +445,7 @@ public class Client_SMTP {
 */
 
     public static void main(String[] args) {
-        Client_SMTP client = new Client_SMTP("jonathan@gmail.com");
+        Client_SMTP client = new Client_SMTP("jonathan@hotmail.fr");
 
     }
 

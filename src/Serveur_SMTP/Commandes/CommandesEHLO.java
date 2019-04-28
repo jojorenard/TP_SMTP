@@ -10,11 +10,21 @@ public class CommandesEHLO extends Commandes {
 
     @Override
     String makeAnswer(String content) {
-        return null;
+        String domain = "gmail.com";
+        String domainClient = "hotmail.fr";
+        System.out.println(content);
+        String[] s = extractContent(content);
+        System.out.println(s[1]);
+        //if state ?{
+        //if(s[1] = domain du serveur){
+        //set nouveau state
+        return "250-"+domain+" greets"+domainClient;
+        //}
+        //}
     }
 
     @Override
     String[] extractContent(String content) {
-        return new String[0];
+        return content.split(" ");
     }
 }

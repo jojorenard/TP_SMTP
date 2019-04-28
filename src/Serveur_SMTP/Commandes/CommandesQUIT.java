@@ -4,7 +4,7 @@ import Serveur_SMTP.Connexion;
 
 public class CommandesQUIT extends Commandes{
 
-    CommandesQUIT(Connexion server, String command) {
+    public CommandesQUIT(Connexion server, String command) {
         super(server, command);
     }
 

@@ -34,12 +34,11 @@ public class Connexion implements Runnable {
 
     //CONSTRUCTOR
     private void setCommandesList(){
-        //CommandesList.add(new CommandesEHLO(this,"EHLO"));
-        //CommandesList.add(new CommandesMAILFROM(this,"MAILFROM"));
-        //CommandesList.add(new CommandesRCPT(this,"RETR"));
-        //CommandesList.add(new CommandesDATA(this,"DATA"));
-        //CommandesList.add(new CommandesQUIT(this,"QUIT"));
-        //A completer
+        CommandesList.add(new CommandesEHLO(this,"EHLO"));
+        CommandesList.add(new CommandesMAILFROM(this,"MAIL FROM"));
+        CommandesList.add(new CommandesRCPTTO(this,"RCPT TO"));
+        CommandesList.add(new CommandesDATA(this,"DATA"));
+        CommandesList.add(new CommandesQUIT(this,"QUIT"));
     }
 
     private void initConstructor(SSLSocket aClientSocket){
@@ -71,7 +70,7 @@ public class Connexion implements Runnable {
     public void run(){/////////// A CHANGER EVIDEMENT
         try {
             // an echo server
-            String data = "+OK alpha POP3 server Ready "+timbre+"\r";
+            String data = "+OK alpha POP3 server Ready "+timbre+"\r"; //220 foo.com Simple Mail Transfer Service Ready
 
             System.out.println ("New connection: " + client.getPort() + ", " + client.getInetAddress());
             outputdata.writeBytes(data); // UTF is a string encoding

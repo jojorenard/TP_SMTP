@@ -4,7 +4,7 @@ import Serveur_SMTP.Connexion;
 
 public class CommandesMAILFROM extends Commandes{
 
-    CommandesMAILFROM(Connexion server, String command) {
+    public CommandesMAILFROM(Connexion server, String command) {
         super(server, command);
     }
 

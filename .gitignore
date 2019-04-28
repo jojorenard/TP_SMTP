@@ -25,5 +25,6 @@ hs_err_pid*
 TP_SMTP.iml
 .idea/libraries/
 .idea/workspace.xml
-out/
+out/*
 .idea/
+out

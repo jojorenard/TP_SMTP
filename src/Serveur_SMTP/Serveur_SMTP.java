@@ -16,7 +16,7 @@ public class Serveur_SMTP {
 
     //CONSTANTS
     final Boolean SERVER_IS_RUNNING = true;
-    final int SERVER_PORT= 1026;
+    final int SERVER_PORT= 1025;
 
     //INITIALIZE
     private SSLServerSocket server;
