@@ -19,7 +19,7 @@ public class CommandesRCPTTO extends Commandes{
             if(server.getStateNum().equals(4) || server.getStateNum().equals(5)) {
                 String[] s = extractContent(content);
 
-                String domain = s[2].split("@")[1];
+                String domain = s[2].split("@")[1].split(".")[0];
                 domain = domain.toUpperCase();
                 if (destInFile(s[2], domain)) {
                     server.setStateNum(5);
@@ -40,13 +40,15 @@ public class CommandesRCPTTO extends Commandes{
     }
 
     boolean destInFile(String dest, String domain) {
-        File file = new File("src/Serveur_SMTP/BDD/Users/User"+ domain +".txt");
-
+        System.out.println("Test");
+        File file = new File("src//Serveur_SMTP//BDD//Users//Users"+ domain.toUpperCase() +".txt");
+        System.out.println("Test1");
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
-
+            System.out.println("Test2");
             String st;
             while ((st = br.readLine()) != null) {
+                System.out.println(st);
                 if(dest.equals(st.split(" ")[2])){
                     return true;
                 }

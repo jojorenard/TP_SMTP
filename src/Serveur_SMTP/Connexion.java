@@ -37,8 +37,8 @@ public class Connexion implements Runnable {
     //CONSTRUCTOR
     private void setCommandesList(){
         CommandesList.add(new CommandesEHLO(this,"EHLO"));
-        CommandesList.add(new CommandesMAILFROM(this,"MAIL FROM"));
-        CommandesList.add(new CommandesRCPTTO(this,"RCPT TO"));
+        CommandesList.add(new CommandesMAILFROM(this,"MAIL"));
+        CommandesList.add(new CommandesRCPTTO(this,"RCPT"));
         CommandesList.add(new CommandesDATA(this,"DATA"));
         CommandesList.add(new CommandesQUIT(this,"QUIT"));
     }
