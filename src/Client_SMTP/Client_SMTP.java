@@ -277,7 +277,8 @@ public class Client_SMTP {
                         commande = "QUIT\r";
                         out.writeBytes(commande);
                         out.flush();
-
+                        clientSocket.close();
+                        initClientSSL();
                         //String response = in.readLine();
                         //System.out.println(response);
                         //System.out.println(in.readLine());//seulement pour voir qu'on recoit bien la réponse
