@@ -81,6 +81,11 @@ public class Client_SMTP {
             commande = scan.nextLine();
             if(commande.equalsIgnoreCase(newMessage)){
                 composeMessage();
+                System.out.println("Message envoye, ecrivez 'Nouveau message' pour écrire un nouveau message.");
+            }
+            else if(commande.equalsIgnoreCase("quit")){
+                System.out.println("A bientot");
+                connected = false;
             }
             else{
                 System.out.println("La commande n'est pas connue, ecrivez 'Nouveau message' pour écrire un nouveau message.");
@@ -93,11 +98,36 @@ public class Client_SMTP {
         List<List<String>> listMails = regroupMails(getRCPT());
 
         //Prendre le message
+        StringBuilder data = new StringBuilder();
+
+        //From
+        data.append("From: <"); data.append(userMail); data.append(">\n");
+
+        //To
+        data.append("To:");
+        for(List<String> mails : listMails){
+            for(String mail : mails){
+                data.append(" <");
+                data.append(mail);
+                data.append(">,");
+            }
+        }
+        data.deleteCharAt(data.length()-1);
+        data.append("\n");
+
+        //Subject
+        data.append("Subject: ");
         Scanner scan = new Scanner(System.in);
         System.out.println("Indiquer l'objet du mail:");
         String objetMail = scan.nextLine();
+        data.append(objetMail); data.append("\n");
+
+        //Date
+        data.append("Date: "); data.append(new Date()); data.append("\n");
+
+        //Corps
+        data.append("\n");
         System.out.println("Indiquer le contenu en terminant par un point isolé à la fin");
-        StringBuilder data = new StringBuilder();
         String corpsMail = scan.nextLine();
         while(!corpsMail.equalsIgnoreCase(".")){
             data.append(corpsMail);
@@ -109,15 +139,21 @@ public class Client_SMTP {
         //Valider l'envoie
         System.out.println("Vous avez fini, ecrivez 'Envoyer' pour confirmer cette action ou 'Annuler'");
         String commande = scan.nextLine();
-        if(commande.equalsIgnoreCase("Envoyer")){
-            send();
-        }
-        else if(commande.equalsIgnoreCase("Annuler")){
-            System.out.println("Vous avez annulé, ecrivez 'Nouveau message' pour écrire un nouveau message.");
-            start();
-        }
-        else{
-            System.out.println("Commande inconnue, ecrivez 'Envoyer' pour confirmer cette action ou 'Annuler'");
+        boolean commandCorrect = false;
+        while(!commandCorrect){
+            if(commande.equalsIgnoreCase("Envoyer")){
+                commandCorrect = true;
+                send(listMails, data.toString());
+            }
+            else if(commande.equalsIgnoreCase("Annuler")){
+                System.out.println("Vous avez annulé, ecrivez 'Nouveau message' pour écrire un nouveau message.");
+                commandCorrect = true;
+                start();
+            }
+            else{
+                System.out.println("Commande inconnue, ecrivez 'Envoyer' pour confirmer cette action ou 'Annuler'");
+                commande = scan.nextLine();
+            }
         }
     }
 
@@ -131,11 +167,11 @@ public class Client_SMTP {
         boolean added;
         String domainMail, domainAdded;
         for(String mail : listMails){
-            domainMail =  mail.split("@")[1].split("\\.")[0];
+            domainMail =  mail.split("@")[1];
             added = false;
             for(int i=0;!added && i<regroupedMails.size();i++){
                 List<String> group = regroupedMails.get(i);
-                domainAdded = group.get(0).split("@")[1].split(".")[0];
+                domainAdded = group.get(0).split("@")[1];
                 if(domainAdded.equalsIgnoreCase(domainMail)){
                     group.add(mail);
                     added = true;
@@ -177,196 +213,80 @@ public class Client_SMTP {
         }
     }
 
-    public void send(){//@TODO : ajouter les parametres destinataire etc..
-        System.out.println("envoi du message");
+    public void send(List<List<String>> listMails, String data){
         try{
-            InetAddress ip = InetAddress.getByName("127.0.0.1");
-            int port = 1025;
-            this.connecte(ip,port);
-            try{
-                String commande = "EHLO gmail.com";//EHLO + getdomain
-                out.writeBytes(commande+"\r");
-                out.flush();
-//                String response = in.readLine();
-//                System.out.println(response);
-                System.out.println(in.readLine());//seulement pour voir qu'on recoit bien la réponse
-            }
-            catch (IOException e){
-                System.out.println(e.getLocalizedMessage());
-                System.out.println(e.getMessage());
-                System.out.println("ERR");
-            }
-        }
-        catch(IOException e){
-            System.out.println(e.getLocalizedMessage());
-            System.out.println(e.getMessage());
-        }
-
-        //A completer avec les EHLO, MAIL FROM, RCPT, DATA
-        //Afficher de la réussite ou de l'échec
-        //retourner au début quand on a fini
-    }
-/*
-    private boolean connecte(){
-        try{
-            clientSocket.connect(new InetSocketAddress(ip, port));
-            try{
-                out = new DataOutputStream(clientSocket.getOutputStream());
-                in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            }
-            catch(IOException e){
-                System.out.println(e.getLocalizedMessage());
-                System.out.println(e.getMessage());
-            }
-            String[] response = in.readLine().split(" ");
-            timbre = response[response.length-1];
-
-            return true;
-        }
-        catch (IOException e){
-            System.out.println(e.getLocalizedMessage());
-            System.out.println(e.getMessage());
-            return false;
-        }
-    }
-
-    private String demandeConnection(){
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Veuillez indiquer votre nom d'utilisateur: ");
-        String user = sc.nextLine();
-        if(user.split(" ").length>1){
-            System.out.println("Vous n'avez pas le droit de mettre d'espace!");
-            return demandeConnection();
-        }
-        String commande = "APOP "+user;
-        System.out.println("Veuillez indiquer votre mot de passe: ");
-        String pass = sc.nextLine();
-        if(pass.split(" ").length>1){
-            System.out.println("Vous n'avez pas le droit de mettre d'espace!");
-            return demandeConnection();
-        }
-        pass = timbre+pass;
-        pass = criptageMD5(pass);
-        commande += " "+pass;
-        return commande;
-    }
-
-    public String criptageMD5(String pass){
-        try {
-            MessageDigest md;
-            md = MessageDigest.getInstance("MD5");
-            byte[] passBytes = pass.getBytes();
-            md.reset();
-            byte[] digested = md.digest(passBytes);
-            StringBuffer sb = new StringBuffer();
-            for(int i=0;i<digested.length;i++){
-                sb.append(Integer.toHexString(0xff & digested[i]));
-            }
-            return sb.toString();
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(Client_POP3.Client_SMTP.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
-
-    private String sendConnection(String commande){
-        try{
-            out.writeBytes(commande+"\r");
-            out.flush();
-            String[] response = in.readLine().split(" ");
-            if(response[0].startsWith("+")){
-                connectedToAccount = true;
-                return response[response.length-2];
-            }
-            return response[1];
-        }
-        catch (IOException e){
-            System.out.println(e.getLocalizedMessage());
-            System.out.println(e.getMessage());
-            return "ERR";
-        }
-    }
-
-    private void run(){
-        //Initier la connection
-        connectedToServer = this.connecte();
-        Integer tries = 0;
-        while(!connectedToServer && tries<3){
-            connectedToServer = this.connecte();
-            tries++;
-        }
-        if(!connectedToServer){
-            System.out.println("Probleme de connection au serveur!");
-            return;
-        }
-
-        //Connection a un compte
-        String response;
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Bienvenue dans notre service!");
-        String commande = demandeConnection();
-        response = sendConnection(commande);
-        // Si la connection ne s'est pas faite
-        while(!connectedToAccount){
-            if(response.equals("0")){
-                System.out.println("Vous n'avez plus le droit de vous authentifier. Reessayez une prochaine fois.");
-                //Pour quitter le processus completement
-                System.exit(0);
-            }
-            else{
-                System.out.println("Oops, vos identifiants ne sont pas corrects, il vous restes "+response+" tentative(s). Veuillez les resaisir:");
-                commande = demandeConnection();
-                response = sendConnection(commande);
-            }
-        }
-        System.out.println("Vous etes connecte!\nVous avez "+response+" message(s)\n");
-
-        while(connectedToServer){
-            System.out.println("Veuillez ecrire une commande ici: ");
-            commande = sc.nextLine();
-            switch (commande.toUpperCase()){
-                case "ACTUALISER":
-                    cmdActualiser();
-                    break;
-
-                case "QUIT":
-                    cmdQuit();
-                    break;
-
-                case "HELP":
-                    cmdHelp();
-                    break;
-
-                default:
-                    System.out.println("Commande inconnue! Tapez 'help' pour connaitre les commandes possibles");
-            }
-        }
-    }
-
-    private void cmdActualiser(){
-        try{
-            // On recupere le nombre de mail
-            String commande = "STAT";
-            out.writeBytes(commande+"\r");
-            out.flush();
-            String returned = in.readLine();
-            String[] response = returned.split(" ");
-
-            //System.out.println(returned);
-
-            if(response[0].startsWith("+")){
-                Integer nbMail = Integer.parseInt(response[1]);
-                BufferedWriter file = new BufferedWriter(new FileWriter("data/client/text.txt"));
-                System.out.println("Vous avez "+nbMail+" messages");
-                for(int i=0;i<nbMail;i++){
-                    commande = "RETR " + i;
-                    out.writeBytes(commande+"\r");
-                    out.flush();
-                    nouveauMail(file, i+1);
+            String domain;
+            InetAddress ip = null;
+            Integer port = null;
+            for(List<String> mails : listMails){
+                domain = mails.get(0).split("@")[1];
+                File file = new File("src/Serveur_SMTP/BDD/ServersInfo.txt");
+                BufferedReader reader = new BufferedReader(new FileReader(file));
+                String serverName = reader.readLine();
+                boolean found = false;
+                while(!found && serverName != null){
+                    String[] info = serverName.split(" ");
+                    if(info[0].equalsIgnoreCase(domain)){
+                        ip = InetAddress.getByName(info[1]);
+                        port = Integer.parseInt(info[2]);
+                        found = true;
+                    }else{
+                        serverName = reader.readLine();
+                    }
                 }
+                if(!found){
+                    System.out.println(domain+" non exsitant");
+                }
+                else{
+                    this.connecte(ip,port);
+                    try{//Pas de gestion d'erreur
+                        //EHLO
+                        String commande = "EHLO "+domain+"\r";
+                        out.writeBytes(commande);
+                        out.flush();
+                        //in.readLine();
+                        System.out.println(in.readLine());
 
-                file.close();
-                readFile();
+                        //MAIL FROM
+                        commande = "MAIL FROM "+userMail+"\r";
+                        out.writeBytes(commande);
+                        out.flush();
+                        //in.readLine();
+                        System.out.println(in.readLine());
+
+                        //RCPT TO
+                        for(String mail : mails){
+                            commande = "RCPT TO "+mail+"\r";
+                            out.writeBytes(commande);
+                            out.flush();
+                            System.out.println(in.readLine());//maybe modifier
+                        }
+
+                        //DATA
+                        commande = "DATA\r";
+                        out.writeBytes(commande);
+                        out.flush();
+                        //in.readLine();
+                        System.out.println(in.readLine());
+                        out.writeBytes(data+"\r");
+                        out.flush();
+                        //in.readLine();
+                        System.out.println(in.readLine());
+
+                        //QUIT
+                        commande = "QUIT\r";
+                        out.writeBytes(commande);
+                        out.flush();
+
+                        //String response = in.readLine();
+                        //System.out.println(response);
+                        //System.out.println(in.readLine());//seulement pour voir qu'on recoit bien la réponse
+                    }
+                    catch (IOException e){
+                        System.out.println(e.getLocalizedMessage());
+                        System.out.println(e.getMessage());
+                    }
+                }
             }
         }
         catch(IOException e){
@@ -374,75 +294,6 @@ public class Client_SMTP {
             System.out.println(e.getMessage());
         }
     }
-
-    private void nouveauMail(BufferedWriter file, Integer index){
-
-        try{
-            String response;
-            file.write("Message "+index);
-            file.newLine();
-            while(!(response = in.readLine()).equals(".")){
-                file.write(response);
-                file.newLine();
-            }
-            file.newLine();
-            file.newLine();
-        }
-        catch (IOException e){
-            System.out.println(e.getLocalizedMessage());
-            System.out.println(e.getMessage());
-        }
-    }
-
-    private void readFile() {
-        try{
-            BufferedReader file = new BufferedReader(new FileReader("data/client/text.txt"));
-
-            String strLine;
-            while((strLine = file.readLine()) != null ){
-                System.out.println(strLine);
-            }
-            file.close();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    private void cmdQuit(){
-        try{
-            String commande = "QUIT";
-            out.writeBytes(commande+"\r");
-            out.flush();
-            String response = in.readLine();
-            //System.out.println(response);
-            if(response.startsWith("+")){
-                System.out.println("Vous vous etes deconnecte, nous vous remercions pour votre visite.");
-                connectedToServer = false;
-                connectedToAccount = false;
-            }
-        }
-        catch(IOException e){
-            System.out.println(e.getLocalizedMessage());
-            System.out.println(e.getMessage());
-        }
-    }
-
-    private void cmdHelp(){
-        System.out.println("Voice les commandes possibles:");
-        List<String> cmds = commandeClient();
-        for(String cmd : cmds){
-            System.out.println(cmd);
-        }
-    }
-
-    private List<String> commandeClient(){
-        List<String> cmd = new ArrayList<>();
-        cmd.add("Actualiser");
-        cmd.add("Quit");
-
-        return cmd;
-    }
-*/
 
     public static void main(String[] args) {
         Client_SMTP client = new Client_SMTP("jonathan@hotmail.fr");
