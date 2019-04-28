@@ -235,7 +235,7 @@ public class Client_SMTP {
                     }
                 }
                 if(!found){
-                    System.out.println(domain+" non exsitant");
+                    System.out.println(domain+" non existant");
                 }
                 else{
                     this.connecte(ip,port);
