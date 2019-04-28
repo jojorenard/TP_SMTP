@@ -134,7 +134,7 @@ public class Client_SMTP {
             data.append("\n");
             corpsMail = scan.nextLine();
         }
-        data.append(".\n");
+        data.append(".");
 
         //Valider l'envoie
         System.out.println("Vous avez fini, ecrivez 'Envoyer' pour confirmer cette action ou 'Annuler'");
@@ -277,6 +277,7 @@ public class Client_SMTP {
                         commande = "QUIT\r";
                         out.writeBytes(commande);
                         out.flush();
+                        System.out.println(in.readLine());
                         clientSocket.close();
                         initClientSSL();
                         //String response = in.readLine();
