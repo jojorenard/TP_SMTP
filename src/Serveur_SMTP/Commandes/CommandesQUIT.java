@@ -10,12 +10,9 @@ public class CommandesQUIT extends Commandes{
 
     @Override
     String makeAnswer(String content) {
-        if (server.isStateTransaction()){
-            System.out.println("state Number" + server.getStateNum());
-            if(server.getStateNum().equals(3) || server.getStateNum().equals(6)) {
-                server.setClose(true);
-                return "221 " + clientDomain + " Clotûre du canal de transmission su service";
-            }
+        if(server.getStateNum().equals(3) || server.getStateNum().equals(6)) {
+            server.setClose(true);
+            return "221 " + clientDomain + " Clotûre du canal de transmission su service";
         }
 
         return "CODE ERREUR - Bad Request";

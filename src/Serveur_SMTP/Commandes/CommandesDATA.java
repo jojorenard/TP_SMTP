@@ -29,7 +29,7 @@ public class CommandesDATA extends Commandes{
                 server.setStateNum(6);
             }
 
-            return "250 OK";
+            return "250 OK ";
         } catch(IOException e) {
             System.out.println(e.getMessage());
         }
@@ -49,6 +49,7 @@ public class CommandesDATA extends Commandes{
             server.autoincrement+= 1;
             outFile.write(data);
             outFile.close();
+            return true;
         } catch(IOException e) {
             System.out.println(e.getMessage());
         }
