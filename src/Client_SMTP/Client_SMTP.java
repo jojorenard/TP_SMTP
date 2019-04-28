@@ -81,20 +81,20 @@ public class Client_SMTP {
             commande = scan.nextLine();
             if(commande.equalsIgnoreCase(newMessage)){
                 composeMessage();
-                System.out.println("Message envoye, ecrivez 'Nouveau message' pour écrire un nouveau message.");
+                System.out.println("Message envoye, ecrivez 'Nouveau message' pour ecrire un nouveau message.");
             }
             else if(commande.equalsIgnoreCase("quit")){
                 System.out.println("A bientot");
                 connected = false;
             }
             else{
-                System.out.println("La commande n'est pas connue, ecrivez 'Nouveau message' pour écrire un nouveau message.");
+                System.out.println("La commande n'est pas connue, ecrivez 'Nouveau message' pour ecrire un nouveau message.");
             }
         }
     }
 
     public void composeMessage(){
-        //Prendre les mails des récepteurs
+        //Prendre les mails des recepteurs
         List<List<String>> listMails = regroupMails(getRCPT());
 
         //Prendre le message
@@ -127,7 +127,7 @@ public class Client_SMTP {
 
         //Corps
         data.append("\n");
-        System.out.println("Indiquer le contenu en terminant par un point isolé à la fin");
+        System.out.println("Indiquer le contenu en terminant par un point isole a la fin");
         String corpsMail = scan.nextLine();
         while(!corpsMail.equalsIgnoreCase(".")){
             data.append(corpsMail);
@@ -146,7 +146,7 @@ public class Client_SMTP {
                 send(listMails, data.toString());
             }
             else if(commande.equalsIgnoreCase("Annuler")){
-                System.out.println("Vous avez annulé, ecrivez 'Nouveau message' pour écrire un nouveau message.");
+                System.out.println("Vous avez annule, ecrivez 'Nouveau message' pour ecrire un nouveau message.");
                 commandCorrect = true;
                 start();
             }
@@ -160,7 +160,7 @@ public class Client_SMTP {
     /**
      * Regrouper les mails par nom de domaines
      * @param listMails tous les mails
-     * @return les mails triés
+     * @return les mails tries
      */
     public List<List<String>> regroupMails(List<String> listMails){
         List<List<String>> regroupedMails = new ArrayList<>();
@@ -187,7 +187,7 @@ public class Client_SMTP {
     }
 
     public List<String> getRCPT(){
-        //Pour vérifier la validité du mail
+        //Pour verifier la validite du mail
         Pattern pattern = Pattern.compile("^(.+)@(.+)\\.(.+)$");
 
         System.out.println("A qui voulez vous envoyer votre mail?");
@@ -208,7 +208,7 @@ public class Client_SMTP {
             return listMails;
         }
         else{
-            System.out.println("Aucun mail n'a été enregistré, veuillez indiquer au moins un mail");
+            System.out.println("Aucun mail n'a ete enregistre, veuillez indiquer au moins un mail");
             return getRCPT();
         }
     }
@@ -235,7 +235,7 @@ public class Client_SMTP {
                     }
                 }
                 if(!found){
-                    System.out.println(domain+" non existant");
+                    System.out.println("le domaine "+domain+" n'existe pas.");
                 }
                 else{
                     this.connecte(ip,port);
@@ -244,51 +244,57 @@ public class Client_SMTP {
                         String commande = "EHLO "+domain+"\r";
                         out.writeBytes(commande);
                         out.flush();
-                        //in.readLine();
-                        System.out.println(in.readLine());
+                        in.readLine();
+                        //System.out.println(in.readLine());
 
                         //MAIL FROM
                         commande = "MAIL FROM "+userMail+"\r";
                         out.writeBytes(commande);
                         out.flush();
-                        //in.readLine();
-                        System.out.println(in.readLine());
+                        in.readLine();
+                        //System.out.println(in.readLine());
 
                         //RCPT TO
+                        String response;
                         for(String mail : mails){
                             commande = "RCPT TO "+mail+"\r";
                             out.writeBytes(commande);
                             out.flush();
-                            System.out.println(in.readLine());//maybe modifier
+                            response = in.readLine();
+                            if(response.startsWith("550")){
+                                System.out.println(mail+" est inconnu. Le mail ne lui sera donc pas envoyé");
+                            }
                         }
 
                         //DATA
                         commande = "DATA\r";
                         out.writeBytes(commande);
                         out.flush();
-                        //in.readLine();
-                        System.out.println(in.readLine());
+                        in.readLine();
+                        //System.out.println(in.readLine());
                         out.writeBytes(data+"\r");
                         out.flush();
-                        //in.readLine();
-                        System.out.println(in.readLine());
+                        in.readLine();
+                        //System.out.println(in.readLine());
 
                         //QUIT
                         commande = "QUIT\r";
                         out.writeBytes(commande);
                         out.flush();
-                        System.out.println(in.readLine());
+                        in.readLine();
+                        //System.out.println(in.readLine());
                         clientSocket.close();
                         initClientSSL();
                         //String response = in.readLine();
                         //System.out.println(response);
-                        //System.out.println(in.readLine());//seulement pour voir qu'on recoit bien la réponse
+                        //System.out.println(in.readLine());//seulement pour voir qu'on recoit bien la reponse
                     }
                     catch (IOException e){
                         System.out.println(e.getLocalizedMessage());
                         System.out.println(e.getMessage());
                     }
                 }
+                reader.close();
             }
         }
         catch(IOException e){

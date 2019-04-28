@@ -26,7 +26,7 @@ public class CommandesRCPTTO extends Commandes{
                     server.setStateNum(5);
                     return "250 OK";
                 } else {
-                    return "CODE ERREUR - Unknown User";
+                    return "550 Unknown User";
                 }
             }
 

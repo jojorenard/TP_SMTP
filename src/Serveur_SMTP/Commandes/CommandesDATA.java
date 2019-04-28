@@ -14,7 +14,7 @@ public class CommandesDATA extends Commandes{
     String makeAnswer(String content) {
         String[] s = extractContent(content);
 
-        server.sendResponse("354 Début des entrées du message ; fin avec <CRLF>.<CRLF>");
+        server.sendResponse("354 Debut des entrees du message ; fin avec <CRLF>.<CRLF>");
 
         String data = "";
         String mail = "";
@@ -44,9 +44,8 @@ public class CommandesDATA extends Commandes{
 
     boolean writeFile(String data) {
         try {
-            File file = new File("src/Serveur_SMTP/BDD/Mails/" + server.getServerDomain() + server.autoincrement + ".txt");
+            File file = new File("src/Serveur_SMTP/BDD/Mails/" + server.getServerDomain() + server.getAutoincrement() + ".txt");
             BufferedWriter outFile = new BufferedWriter(new FileWriter(file));
-            server.autoincrement+= 1;
             outFile.write(data);
             outFile.close();
             return true;

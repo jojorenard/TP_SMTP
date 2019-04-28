@@ -13,6 +13,7 @@ import java.util.List;
 public class Serveur_SMTP {
 
     private String domain;
+    private Integer autoincrement;
 
     //CONSTANTS
     final Boolean SERVER_IS_RUNNING = true;
@@ -27,6 +28,7 @@ public class Serveur_SMTP {
     }
 
     public Serveur_SMTP(String domain){
+        autoincrement = 0;
         this.domain = domain;
         initServeurSSL();
     }
@@ -58,7 +60,8 @@ public class Serveur_SMTP {
 
             while(SERVER_IS_RUNNING) {
                 client = (SSLSocket) server.accept();
-                new Thread(new Connexion(client, domain)).start();
+                autoincrement++;
+                new Thread(new Connexion(client, domain,autoincrement)).start();
 
             }
         } catch (IOException e) {

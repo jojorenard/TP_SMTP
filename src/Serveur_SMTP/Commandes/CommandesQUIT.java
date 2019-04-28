@@ -12,7 +12,7 @@ public class CommandesQUIT extends Commandes{
     String makeAnswer(String content) {
         if(server.getStateNum().equals(3) || server.getStateNum().equals(6)) {
             server.setClose(true);
-            return "221 " + clientDomain + " Clotûre du canal de transmission su service";
+            return "221 " + server.getServerDomain() + " Cloture du canal de transmission du service";
         }
 
         return "CODE ERREUR - Bad Request";

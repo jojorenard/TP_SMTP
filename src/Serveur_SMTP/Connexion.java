@@ -13,7 +13,7 @@ public class Connexion implements Runnable {
 
     private String serverDomain;
     private Integer stateNum = 1;
-    public Integer autoincrement = 1;
+    private Integer autoincrement;
 
     //INITIALIZE FOR CLIENT
     public BufferedReader inputdata;
@@ -23,8 +23,6 @@ public class Connexion implements Runnable {
     //FOR OTHER SERVERS
     private boolean close;
     private ArrayList<Commandes> CommandesList = new ArrayList<>();
-    private String user;
-    private String timbre;
 
     //CONSTANTS
     int NUMBER_OF_CHANCES = 3;
@@ -49,17 +47,14 @@ public class Connexion implements Runnable {
             client = aClientSocket;
             inputdata = new BufferedReader( new InputStreamReader(client.getInputStream()));
             outputdata =new DataOutputStream( client.getOutputStream());
-            /*//Le timbre-a-date
-            String[] info = ManagementFactory.getRuntimeMXBean().getName().split("@");
-            Timestamp time = new Timestamp(System.currentTimeMillis());
-            timbre = "<"+info[0]+"."+time.getTime()+"@"+info[1]+">";*/
         }
         catch(IOException e) {
             System.out.println("Connection: "+e.getMessage());
         }
     }
 
-    public Connexion(SSLSocket aClientSocket, String serverDomain){
+    public Connexion(SSLSocket aClientSocket, String serverDomain, Integer autoincrement){
+        this.autoincrement = autoincrement;
         this.serverDomain = serverDomain;
         initConstructor(aClientSocket);
     }
@@ -102,11 +97,10 @@ public class Connexion implements Runnable {
                         break;
                 }
             }catch (Exception e){
-                System.out.println("\n Connexion avec le client :" + client.getInetAddress() + " : " + client.getPort() + " coupée inopinement !");
+                System.out.println("\n Connexion avec le client :" + client.getInetAddress() + " : " + client.getPort() + " coupee inopinement !");
             }
             if(close)
             {
-//                sendResponse("-ERR number of chances attempt");
                 client.close();
             }
         } catch (IOException e) {
@@ -162,18 +156,6 @@ public class Connexion implements Runnable {
     }
 
     //GETTER & SETTER
-    public void setState(String state){
-        this.state = state;
-    }
-
-    public int getNUMBER_OF_CHANCES(){
-        return NUMBER_OF_CHANCES;
-    }
-
-    public String getSTATE_TRANSACTION() {
-        return STATE_TRANSACTION;
-    }
-
     public Integer getStateNum() { return this.stateNum; }
 
     public void setStateNum(Integer stateNum) { this.stateNum = stateNum; }
@@ -182,27 +164,19 @@ public class Connexion implements Runnable {
         this.close = close;
     }
 
-    public boolean isStateTransaction() {
-        return Objects.equals(state, STATE_TRANSACTION);
-    }
-
-    /*public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public String getTimbre(){
-        return timbre;
-    }*/
-
     public String getServerDomain() {
         return serverDomain;
     }
 
     public void setServerDomain(String serverDomain) {
         this.serverDomain = serverDomain;
+    }
+
+    public Integer getAutoincrement() {
+        return autoincrement;
+    }
+
+    public void setAutoincrement(Integer autoincrement) {
+        this.autoincrement = autoincrement;
     }
 }
