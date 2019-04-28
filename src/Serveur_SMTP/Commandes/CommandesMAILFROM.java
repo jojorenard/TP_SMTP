@@ -11,9 +11,6 @@ public class CommandesMAILFROM extends Commandes{
     @Override
     String makeAnswer(String content) {
         if(server.getStateNum().equals(3)){
-            String[] s = extractContent(content);
-            System.out.println(s[2]);
-
             server.setStateNum(4);
 
             return "250 OK";

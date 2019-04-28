@@ -11,11 +11,11 @@ public class CommandesEHLO extends Commandes {
     @Override
     String makeAnswer(String content) {
         String[] s = extractContent(content);
-        System.out.println(s[1]);
+        clientDomain = s[1];
 
         server.setStateNum(3);
 
-        return "250 ok "+server.getServerDomain()+" greets "+s[1];
+        return "250 OK " + server.getServerDomain() + " greets "+s[1];
     }
 
     @Override

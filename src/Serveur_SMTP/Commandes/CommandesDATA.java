@@ -13,22 +13,25 @@ public class CommandesDATA extends Commandes{
 
     @Override
     String makeAnswer(String content) {
-        System.out.println(content);
         String[] s = extractContent(content);
-        System.out.println(s[2]);
 
         server.sendResponse("354 Début des entrées du message ; fin avec <CRLF>.<CRLF>");
 
         String data = "";
+        String mail = "";
         try{
-            data = server.inputdata.readLine();
-            writeFile(data);
+            do {
+                System.out.println(data);
+                mail+=data;
+            } while (!(data = server.inputdata.readLine()).equals("."));
+
+            writeFile(mail);
+
             server.setStateNum(6);
 
             return "250 OK";
-
         } catch(IOException e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
         }
 
         return "CODE ERREUR - Request Failed";
@@ -41,7 +44,7 @@ public class CommandesDATA extends Commandes{
 
     String writeFile(String data) {
         try {
-            FileWriter outFile = new FileWriter("src/Server_SMTP/Mails/" + clientDomain + server.autoincrement + ".txt", true);
+            FileWriter outFile = new FileWriter("src//Server_SMTP//BDD//Mails//" + clientDomain + server.autoincrement + ".txt", true);
             server.autoincrement+= 1;
             outFile.write("\r\n");
             outFile.write(data);
