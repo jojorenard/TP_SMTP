@@ -6,6 +6,7 @@ public abstract class Commandes {
     //FIELDS
     Connexion server;
     private String command;
+    String clientDomain;
 
     //CONSTRUCTEUR
     Commandes(Connexion server, String command) {

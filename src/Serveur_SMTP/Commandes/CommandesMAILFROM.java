@@ -10,11 +10,20 @@ public class CommandesMAILFROM extends Commandes{
 
     @Override
     String makeAnswer(String content) {
-        return null;
+        if(server.getStateNum().equals(3)){
+            String[] s = extractContent(content);
+            System.out.println(s[2]);
+
+            server.setStateNum(4);
+
+            return "250 OK";
+        }
+
+        return "CODE ERREUR - Bad request";
     }
 
     @Override
     String[] extractContent(String content) {
-        return new String[0];
+        return content.split(" ");
     }
 }

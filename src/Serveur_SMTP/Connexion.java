@@ -12,10 +12,12 @@ import java.util.Objects;
 public class Connexion implements Runnable {
 
     private String serverDomain;
+    private Integer stateNum = 1;
+    public Integer autoincrement = 1;
 
     //INITIALIZE FOR CLIENT
-    private BufferedReader inputdata;
-    private DataOutputStream outputdata;
+    public BufferedReader inputdata;
+    public DataOutputStream outputdata;
     private SSLSocket client;
 
     //FOR OTHER SERVERS
@@ -76,6 +78,8 @@ public class Connexion implements Runnable {
             outputdata.writeBytes(data); // UTF is a string encoding
             outputdata.flush();
             System.out.println ("send: " + data);
+
+            setStateNum(2);
 
             if(client.isConnected())
                 readCommand();
@@ -169,6 +173,10 @@ public class Connexion implements Runnable {
     public String getSTATE_TRANSACTION() {
         return STATE_TRANSACTION;
     }
+
+    public Integer getStateNum() { return this.stateNum; }
+
+    public void setStateNum(Integer stateNum) { this.stateNum = stateNum; }
 
     public void setClose(boolean close) {
         this.close = close;
