@@ -20,13 +20,7 @@ public class CommandesRCPTTO extends Commandes{
                 String[] s = extractContent(content);
 
                 String domain = s[2].split("@")[1];
-                domain = domain.split(".")[0].toUpperCase();
-/*
-                if (!domain.equals(server.getServerDomain())) {
-                    server.accessNewServer();
-                    return null;
-                }
-*/
+                domain = domain.toUpperCase();
                 if (destInFile(s[2], domain)) {
                     server.setStateNum(5);
                     return "250 OK";
