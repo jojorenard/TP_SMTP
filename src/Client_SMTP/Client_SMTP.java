@@ -30,7 +30,7 @@ public class Client_SMTP {
         System.out.println("Bonjour, ecrivez 'Nouveau message' pour ecrire un nouveau message.");
         start();
     }
-    private boolean connecte(InetAddress ip, int port){
+    private boolean connecte(InetAddress ip, int port, String domain){
         try{
             clientSocket.connect(new InetSocketAddress(ip, port));
             try{
@@ -46,7 +46,7 @@ public class Client_SMTP {
             return true;
         }
         catch (IOException e){
-            System.out.println("Impossible de trouver le serveur correspondant");
+            System.out.println("Impossible de trouver le serveur correspondant à "+domain);
             return false;
         }
     }
@@ -123,6 +123,10 @@ public class Client_SMTP {
 
         //Date
         data.append("Date: "); data.append(new Date()); data.append("\n");
+
+        //message ID
+        Random rand = new Random();
+        data.append("Message-ID: <");data.append(rand.nextInt());data.append(userMail);data.append(">\n");
 
         //Corps
         data.append("\n");
@@ -237,7 +241,7 @@ public class Client_SMTP {
                     System.out.println("le domaine "+domain+" n'existe pas.");
                 }
                 else{
-                    if(this.connecte(ip,port)){
+                    if(this.connecte(ip,port,domain)){
                         try{//Pas de gestion d'erreur
 
                             //EHLO
