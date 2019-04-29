@@ -46,8 +46,7 @@ public class Client_SMTP {
             return true;
         }
         catch (IOException e){
-            System.out.println(e.getLocalizedMessage());
-            System.out.println(e.getMessage());
+            System.out.println("Impossible de trouver le serveur correspondant");
             return false;
         }
     }
@@ -238,61 +237,63 @@ public class Client_SMTP {
                     System.out.println("le domaine "+domain+" n'existe pas.");
                 }
                 else{
-                    this.connecte(ip,port);
-                    try{//Pas de gestion d'erreur
-                        //EHLO
-                        String commande = "EHLO "+domain+"\r";
-                        out.writeBytes(commande);
-                        out.flush();
-                        in.readLine();
-                        //System.out.println(in.readLine());
+                    if(this.connecte(ip,port)){
+                        try{//Pas de gestion d'erreur
 
-                        //MAIL FROM
-                        commande = "MAIL FROM "+userMail+"\r";
-                        out.writeBytes(commande);
-                        out.flush();
-                        in.readLine();
-                        //System.out.println(in.readLine());
-
-                        //RCPT TO
-                        String response;
-                        for(String mail : mails){
-                            commande = "RCPT TO "+mail+"\r";
+                            //EHLO
+                            String commande = "EHLO "+domain+"\r";
                             out.writeBytes(commande);
                             out.flush();
-                            response = in.readLine();
-                            if(response.startsWith("550")){
-                                System.out.println(mail+" est inconnu. Le mail ne lui sera donc pas envoyé");
+                            in.readLine();
+                            //System.out.println(in.readLine());
+
+                            //MAIL FROM
+                            commande = "MAIL FROM "+userMail+"\r";
+                            out.writeBytes(commande);
+                            out.flush();
+                            in.readLine();
+                            //System.out.println(in.readLine());
+
+                            //RCPT TO
+                            String response;
+                            for(String mail : mails){
+                                commande = "RCPT TO "+mail+"\r";
+                                out.writeBytes(commande);
+                                out.flush();
+                                response = in.readLine();
+                                if(response.startsWith("550")){
+                                    System.out.println(mail+" est inconnu. Le mail ne lui sera donc pas envoyé");
+                                }
                             }
+
+                            //DATA
+                            commande = "DATA\r";
+                            out.writeBytes(commande);
+                            out.flush();
+                            in.readLine();
+                            //System.out.println(in.readLine());
+                            out.writeBytes(data+"\r");
+                            out.flush();
+                            in.readLine();
+                            //System.out.println(in.readLine());
+
+                            //QUIT
+                            commande = "QUIT\r";
+                            out.writeBytes(commande);
+                            out.flush();
+                            in.readLine();
+                            //System.out.println(in.readLine());
+                            //String response = in.readLine();
+                            //System.out.println(response);
+                            //System.out.println(in.readLine());//seulement pour voir qu'on recoit bien la reponse
                         }
-
-                        //DATA
-                        commande = "DATA\r";
-                        out.writeBytes(commande);
-                        out.flush();
-                        in.readLine();
-                        //System.out.println(in.readLine());
-                        out.writeBytes(data+"\r");
-                        out.flush();
-                        in.readLine();
-                        //System.out.println(in.readLine());
-
-                        //QUIT
-                        commande = "QUIT\r";
-                        out.writeBytes(commande);
-                        out.flush();
-                        in.readLine();
-                        //System.out.println(in.readLine());
-                        clientSocket.close();
-                        initClientSSL();
-                        //String response = in.readLine();
-                        //System.out.println(response);
-                        //System.out.println(in.readLine());//seulement pour voir qu'on recoit bien la reponse
+                        catch (IOException e){
+                            System.out.println(e.getLocalizedMessage());
+                            System.out.println(e.getMessage());
+                        }
                     }
-                    catch (IOException e){
-                        System.out.println(e.getLocalizedMessage());
-                        System.out.println(e.getMessage());
-                    }
+                    clientSocket.close();
+                    initClientSSL();
                 }
                 reader.close();
             }
